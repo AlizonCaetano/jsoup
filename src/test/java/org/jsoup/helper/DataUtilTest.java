@@ -336,6 +336,17 @@ public class DataUtilTest {
     }
 
     @Test
+    void detectsBomWhenReadsAreShort() throws IOException {
+        // a stream may return fewer bytes than asked for; the BOM must still be found
+        String html = "\uFEFF<p>Hello</p>";
+        for (Charset charset : new Charset[]{StandardCharsets.UTF_16BE, StandardCharsets.UTF_8}) {
+            VaryingReadInputStream stream = new VaryingReadInputStream(new ByteArrayInputStream(html.getBytes(charset)));
+            Document doc = DataUtil.parseInputStream(ControllableInputStream.wrap(stream, 0), null, "http://example.com/", Parser.htmlParser());
+            assertEquals("Hello", doc.body().text(), charset.name());
+        }
+    }
+
+    @Test
     void handlesUnlimitedRead() throws IOException {
         File inputFile = ParseTest.getFile("/htmltests/large.html");
         String input = ParseTest.getFileAsString(inputFile);
