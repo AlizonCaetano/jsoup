@@ -1504,6 +1504,18 @@ public class SelectorTest {
         assertEquals("o", els.get(0).id());
     }
 
+    @Test void nthChildAllowsWhitespaceAroundOffsetSign() {
+        // CSS allows whitespace around the sign in An+B, like "2n + 1"
+        Document doc = Jsoup.parse("<ul><li>1</li><li>2</li><li>3</li><li>4</li><li>5</li></ul>");
+        assertEquals("1 3 5", doc.select("li:nth-child(2n + 1)").text());
+        assertEquals("1 3 5", doc.select("li:nth-child(2n +1)").text());
+        assertEquals("1 3 5", doc.select("li:nth-child(2n+ 1)").text());
+        assertEquals("1 3 5", doc.select("li:nth-child(2n - 1)").text());
+        assertEquals("1 2 3", doc.select("li:nth-child(-n + 3)").text());
+        assertEquals("2 3 4 5", doc.select("li:nth-child(n + 2)").text());
+        assertEquals("1 3 5", doc.select("li:nth-last-child(2n + 1)").text());
+    }
+
     @Test void negativeNthChild() {
         // https://github.com/jhy/jsoup/issues/1147
         String html = "<p>1</p> <p>2</p> <p>3</p> <p>4</p>";

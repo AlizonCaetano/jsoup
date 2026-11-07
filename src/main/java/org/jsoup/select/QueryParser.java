@@ -490,7 +490,7 @@ public class QueryParser implements AutoCloseable {
                 else // no digits, might be like n+2, or -n+2. if group(2) == "-", it’s -1;
                     step = "-".equals(stepOffsetM.group(2)) ? -1 : 1;
                 offset =
-                    stepOffsetM.group(4) != null ? Integer.parseInt(stepOffsetM.group(4).replaceFirst("^\\+", "")) : 0;
+                    stepOffsetM.group(4) != null ? Integer.parseInt(stepOffsetM.group(4).replaceAll("\\s+", "").replaceFirst("^\\+", "")) : 0;
             } else if ((stepM = NthOffset.matcher(arg)).matches()) {
                 step = 0;
                 offset = Integer.parseInt(stepM.group().replaceFirst("^\\+", ""));
