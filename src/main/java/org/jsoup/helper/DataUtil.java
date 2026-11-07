@@ -406,8 +406,7 @@ public final class DataUtil {
     private static @Nullable String detectCharsetFromBom(ControllableInputStream input) throws IOException {
         byte[] bom = new byte[4];
         input.mark(bom.length);
-        //noinspection ResultOfMethodCallIgnored
-        input.read(bom, 0, 4);
+        readUpTo(input, bom, 4); // loops over short reads, so a BOM split across reads is still seen
         input.reset();
 
         // 16 and 32 decoders consume the BOM to determine be/le; utf-8 should be consumed here
@@ -418,9 +417,19 @@ public final class DataUtil {
             bom[0] == (byte) 0xFF && bom[1] == (byte) 0xFE) {
             return "UTF-16"; // in all Javas
         } else if (bom[0] == (byte) 0xEF && bom[1] == (byte) 0xBB && bom[2] == (byte) 0xBF) {
-            input.read(bom, 0, 3); // consume the UTF-8 BOM
+            readUpTo(input, bom, 3); // consume the UTF-8 BOM
             return "UTF-8"; // in all Javas
         }
         return null;
+    }
+
+    /** Reads until {@code len} bytes are in {@code buf} or the stream ends; a single read() may return fewer bytes. */
+    private static void readUpTo(InputStream in, byte[] buf, int len) throws IOException {
+        int total = 0;
+        while (total < len) {
+            int read = in.read(buf, total, len - total);
+            if (read <= 0) break;
+            total += read;
+        }
     }
 }
