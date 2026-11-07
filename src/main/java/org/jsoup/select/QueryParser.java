@@ -470,7 +470,7 @@ public class QueryParser implements AutoCloseable {
     }
 
     //pseudo selectors :first-child, :last-child, :nth-child, ...
-    private static final Pattern NthStepOffset = Pattern.compile("(([+-])?(\\d+)?)n(\\s*([+-])?\\s*\\d+)?", Pattern.CASE_INSENSITIVE);
+    private static final Pattern NthStepOffset = Pattern.compile("(([+-])?(\\d+)?)n(\\s*[+-]\\s*\\d+|\\d+)?", Pattern.CASE_INSENSITIVE);
     private static final Pattern NthOffset = Pattern.compile("([+-])?(\\d+)");
 
     private Evaluator cssNthChild(boolean last, boolean ofType) {

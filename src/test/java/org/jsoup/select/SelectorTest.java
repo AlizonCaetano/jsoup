@@ -1514,6 +1514,10 @@ public class SelectorTest {
         assertEquals("1 2 3", doc.select("li:nth-child(-n + 3)").text());
         assertEquals("2 3 4 5", doc.select("li:nth-child(n + 2)").text());
         assertEquals("1 3 5", doc.select("li:nth-last-child(2n + 1)").text());
+
+        // whitespace is only allowed around a sign
+        assertThrows(Selector.SelectorParseException.class, () -> doc.select("li:nth-child(2n 1)"));
+        assertThrows(Selector.SelectorParseException.class, () -> doc.select("li:nth-child(-n 3)"));
     }
 
     @Test void negativeNthChild() {
